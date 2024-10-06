@@ -51,15 +51,18 @@ export function OrderManagement() {
   const getStatusBadge = (status: Order['status']) => {
     switch (status) {
       case 'Pending':
-        return <Badge variant="secondary">{status}</Badge>
+        return <Badge variant="secondary">{status}</Badge>;
       case 'In Progress':
-        return <Badge variant="primary">{status}</Badge>
+        return <Badge variant="default">{status}</Badge>; // Changed "primary" to "default"
       case 'Completed':
-        return <Badge variant="success">{status}</Badge>
+        return <Badge variant="outline">{status}</Badge>; // Changed "success" to "outline"
       case 'Cancelled':
-        return <Badge variant="destructive">{status}</Badge>
+        return <Badge variant="destructive">{status}</Badge>;
+      default:
+        return <Badge variant="default">{status}</Badge>; // Fallback in case status is undefined
     }
-  }
+  };
+  
 
   return (
     <div>
