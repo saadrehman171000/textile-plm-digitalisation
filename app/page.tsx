@@ -1,14 +1,8 @@
-"use client";
-
-import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+// app/page.tsx
+import { redirect } from 'next/navigation';
 
 export default function Home() {
-  const router = useRouter();
-
-  useEffect(() => {
-    router.push('/login');
-  }, [router]);
-
+  // Automatically redirect to landing page
+  redirect('/landing-page');
   return null;
 }
