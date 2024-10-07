@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 
+
 type Order = {
   id: number
   customerName: string
@@ -19,7 +20,6 @@ type Order = {
   total: number
   company: string
 }
-
 
 type Company = {
   id: number
