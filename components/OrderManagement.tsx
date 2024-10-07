@@ -20,6 +20,7 @@ type Order = {
   company: string
 }
 
+
 type Company = {
   id: number
   name: string
