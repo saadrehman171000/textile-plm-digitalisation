@@ -7,13 +7,13 @@
 6 silly config load:file:C:\Users\saadr\AppData\Roaming\npm\etc\npmrc
 7 verbose title npm run build
 8 verbose argv "run" "build"
-9 verbose logfile logs-max:10 dir:C:\Users\saadr\Desktop\UpdatedFyp\textile-plm-digitalisation\%APPDATA%\npm-cache\_logs\2024-10-07T12_37_16_867Z-
-10 verbose logfile C:\Users\saadr\Desktop\UpdatedFyp\textile-plm-digitalisation\%APPDATA%\npm-cache\_logs\2024-10-07T12_37_16_867Z-debug-0.log
+9 verbose logfile logs-max:10 dir:C:\Users\saadr\Desktop\UpdatedFyp\textile-plm-digitalisation\%APPDATA%\npm-cache\_logs\2024-10-07T19_21_26_226Z-
+10 verbose logfile C:\Users\saadr\Desktop\UpdatedFyp\textile-plm-digitalisation\%APPDATA%\npm-cache\_logs\2024-10-07T19_21_26_226Z-debug-0.log
 11 silly logfile start cleaning logs, removing 1 files
 12 silly logfile done cleaning log files
 13 verbose cwd C:\Users\saadr\Desktop\UpdatedFyp\textile-plm-digitalisation
 14 verbose os Windows_NT 10.0.22631
 15 verbose node v22.3.0
 16 verbose npm  v10.8.1
-17 verbose exit 1
-18 verbose code 1
+17 verbose exit 0
+18 info ok

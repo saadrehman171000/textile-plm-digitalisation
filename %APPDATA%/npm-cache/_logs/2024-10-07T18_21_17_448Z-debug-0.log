@@ -5,14 +5,14 @@
 4 silly config load:file:C:\Users\saadr\Desktop\UpdatedFyp\textile-plm-digitalisation\.npmrc
 5 silly config load:file:C:\Users\saadr\.npmrc
 6 silly config load:file:C:\Users\saadr\AppData\Roaming\npm\etc\npmrc
-7 verbose title npm exec shadcn@latest add https://v0.dev/chat/b/b_RmZHDbuioPN?token=eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2R0NNIn0..F2EdUoMJrTvbJ8Nb.u8X4LtfUeV3xqcM51liZMUHZHip7sO0iTxVoWGvjMtrAqdR1XAiSpLRdPkA.o8Qa1b8WuIclyYvbuWX7Pg
-8 verbose argv "exec" "--" "shadcn@latest" "add" "https://v0.dev/chat/b/b_RmZHDbuioPN?token=eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2R0NNIn0..F2EdUoMJrTvbJ8Nb.u8X4LtfUeV3xqcM51liZMUHZHip7sO0iTxVoWGvjMtrAqdR1XAiSpLRdPkA.o8Qa1b8WuIclyYvbuWX7Pg"
-9 verbose logfile logs-max:10 dir:C:\Users\saadr\Desktop\UpdatedFyp\textile-plm-digitalisation\%APPDATA%\npm-cache\_logs\2024-10-07T11_51_38_961Z-
-10 verbose logfile C:\Users\saadr\Desktop\UpdatedFyp\textile-plm-digitalisation\%APPDATA%\npm-cache\_logs\2024-10-07T11_51_38_961Z-debug-0.log
+7 verbose title npm exec shadcn@latest add https://v0.dev/chat/b/b_ERDQK0fqREO?token=eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2R0NNIn0.._nX8fcd6hm0Lajlx.i-bn28HL2tqe-nQBE9xifuT0WdIUjy8XR0yXX9D-EkX7RcvnQ0CNoj8NP_o.tAaLEU1hWkHMZ4-7Z2Xf0Q
+8 verbose argv "exec" "--" "shadcn@latest" "add" "https://v0.dev/chat/b/b_ERDQK0fqREO?token=eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2R0NNIn0.._nX8fcd6hm0Lajlx.i-bn28HL2tqe-nQBE9xifuT0WdIUjy8XR0yXX9D-EkX7RcvnQ0CNoj8NP_o.tAaLEU1hWkHMZ4-7Z2Xf0Q"
+9 verbose logfile logs-max:10 dir:C:\Users\saadr\Desktop\UpdatedFyp\textile-plm-digitalisation\%APPDATA%\npm-cache\_logs\2024-10-07T18_21_17_448Z-
+10 verbose logfile C:\Users\saadr\Desktop\UpdatedFyp\textile-plm-digitalisation\%APPDATA%\npm-cache\_logs\2024-10-07T18_21_17_448Z-debug-0.log
 11 silly logfile start cleaning logs, removing 1 files
 12 silly logfile done cleaning log files
 13 silly packumentCache heap:4345298944 maxSize:1086324736 maxEntrySize:543162368
-14 http fetch GET 200 https://registry.npmjs.org/shadcn 845ms (cache revalidated)
+14 http fetch GET 200 https://registry.npmjs.org/shadcn 1112ms (cache revalidated)
 15 silly packumentCache heap:4345298944 maxSize:1086324736 maxEntrySize:543162368
 16 silly packumentCache heap:4345298944 maxSize:1086324736 maxEntrySize:543162368
 17 verbose cwd C:\Users\saadr\Desktop\UpdatedFyp\textile-plm-digitalisation

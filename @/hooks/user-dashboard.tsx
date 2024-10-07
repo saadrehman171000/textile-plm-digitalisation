@@ -1,7 +1,8 @@
 "use client"
 
 import { useState } from "react"
-import { Bell, LogOut, Search, User } from "lucide-react"
+import { useRouter } from "next/navigation"
+import { LogOut, Search, User, Bell, ShoppingBag, Settings, CreditCard } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -41,6 +42,7 @@ export default function UserDashboard() {
     email: "john.doe@example.com",
     avatar: "/placeholder.svg?height=32&width=32",
   })
+  const router = useRouter()
 
   const handlePlaceOrder = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -67,6 +69,11 @@ export default function UserDashboard() {
     })
   }
 
+  const handleLogout = () => {
+    // In a real application, you would clear the user's session here
+    router.push("/login")
+  }
+
   const getStatusBadge = (status: Order["status"]) => {
     switch (status) {
       case "Pending":
@@ -79,19 +86,40 @@ export default function UserDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
-      <header className="sticky top-0 z-40 bg-white dark:bg-gray-800 shadow-md">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <header className="sticky top-0 z-40 bg-white dark:bg-gray-800 shadow-sm">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-gray-800 dark:text-white">User Dashboard</h1>
           <div className="flex items-center space-x-4">
-            <form className="relative">
+            <svg className="h-8 w-8 text-blue-600 dark:text-blue-400" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M2 17L12 22L22 17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M2 12L12 17L22 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            <h1 className="text-2xl font-bold text-gray-800 dark:text-white">FiberFlow</h1>
+          </div>
+          <div className="flex items-center space-x-4">
+            <form className="relative hidden md:block">
               <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400" />
               <Input
                 type="search"
                 placeholder="Search..."
-                className="pl-8 pr-4 py-2 w-full md:w-[300px] rounded-full border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                className="pl-8 pr-4 py-2 w-[200px] lg:w-[300px] rounded-full border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
               />
             </form>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon">
+                  <Bell className="h-5 w-5" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-[300px]">
+                <DropdownMenuLabel>Notifications</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>Your order has been shipped</DropdownMenuItem>
+                <DropdownMenuItem>New product available</DropdownMenuItem>
+                <DropdownMenuItem>Your review has been approved</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="relative h-8 w-8 rounded-full">
@@ -113,7 +141,7 @@ export default function UserDashboard() {
                   <User className="mr-2 h-4 w-4" />
                   <span>Profile</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={handleLogout}>
                   <LogOut className="mr-2 h-4 w-4" />
                   <span>Log out</span>
                 </DropdownMenuItem>
@@ -125,10 +153,23 @@ export default function UserDashboard() {
 
       <main className="container mx-auto px-4 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
-          <TabsList>
-            <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
-            <TabsTrigger value="new-order">Place New Order</TabsTrigger>
-            <TabsTrigger value="profile">Profile</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-4 lg:w-[400px]">
+            <TabsTrigger value="dashboard">
+              <ShoppingBag className="mr-2 h-4 w-4" />
+              Dashboard
+            </TabsTrigger>
+            <TabsTrigger value="new-order">
+              <CreditCard className="mr-2 h-4 w-4" />
+              New Order
+            </TabsTrigger>
+            <TabsTrigger value="profile">
+              <User className="mr-2 h-4 w-4" />
+              Profile
+            </TabsTrigger>
+            <TabsTrigger value="settings">
+              <Settings className="mr-2 h-4 w-4" />
+              Settings
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="dashboard" className="space-y-4">
@@ -232,6 +273,36 @@ export default function UserDashboard() {
                   </CardFooter>
                 </form>
               </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="settings">
+            <Card>
+              <CardHeader>
+                <CardTitle>Account Settings</CardTitle>
+                <CardDescription>Manage your account preferences</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="text-lg font-medium">Email Notifications</h3>
+                      <p className="text-sm text-gray-500">Receive email updates about your account activity</p>
+                    </div>
+                    <Input type="checkbox" className="toggle" />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="text-lg font-medium">Two-Factor Authentication</h3>
+                      <p className="text-sm text-gray-500">Add an extra layer of security to your account</p>
+                    </div>
+                    <Input type="checkbox" className="toggle" />
+                  </div>
+                </div>
+              </CardContent>
+              <CardFooter>
+                <Button>Save Changes</Button>
+              </CardFooter>
             </Card>
           </TabsContent>
         </Tabs>
