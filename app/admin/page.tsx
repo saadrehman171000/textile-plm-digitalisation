@@ -25,7 +25,8 @@ export default function AdminDashboard() {
   const [searchQuery, setSearchQuery] = useState("")
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
 
-  const handleSearch = (e: React.FormEvent) => {
+
+    const HandleSearch = (e: React.FormEvent) => {
     e.preventDefault()
     console.log("Searching for:", searchQuery)
     // Implement your search logic here
