@@ -27,11 +27,12 @@ export default function AdminDashboard() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   const [isDarkMode, setIsDarkMode] = useState(false)
 
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
     console.log("Searching for:", searchQuery)
   }
-
+  
   const toggleDarkMode = () => setIsDarkMode(!isDarkMode)
 
   return (
