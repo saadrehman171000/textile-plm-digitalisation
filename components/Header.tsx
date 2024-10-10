@@ -3,14 +3,13 @@ import { Search, Bell, Sun, Moon } from 'lucide-react'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { Dispatch, SetStateAction, useState } from 'react'
 import { UserButton } from '@clerk/nextjs'
 import { Switch } from './ui/switch'
 
 type Props = {
   isDarkMode: boolean,
-  setIsDarkMode: any
+  setIsDarkMode: Dispatch<SetStateAction<boolean>>
 }
 
 const Header = ({ isDarkMode, setIsDarkMode }: Props) => {

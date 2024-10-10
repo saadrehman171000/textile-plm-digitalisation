@@ -74,7 +74,7 @@ export function Page() {
           <CardFooter className="flex flex-col space-y-4">
             <Button type="submit" className="w-full">Login</Button>
             <p className="text-sm text-center">
-              Don't have an account?{" "}
+              Don&apos;t have an account?{" "}
               <Link href="/signup" className="text-blue-500 hover:underline">
                 Sign up
               </Link>
