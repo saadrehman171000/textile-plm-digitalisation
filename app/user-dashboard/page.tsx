@@ -1,8 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { LogOut, Search, User, Bell, ShoppingBag, Settings, CreditCard, Home, Package, Sun, Moon } from 'lucide-react'
+import { User, ShoppingBag, Settings, CreditCard, Home, Package } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -15,6 +15,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Textarea } from '@/components/ui/textarea'
 import { Switch } from '@/components/ui/switch'
+import { UserButton, useUser } from '@clerk/nextjs'
+import Header from '@/components/Header'
 
 type Order = {
   id: string
@@ -25,63 +27,77 @@ type Order = {
   date: string
 }
 
-type User = {
-  name: string
-  email: string
-  avatar: string
-}
+
 
 export default function UserDashboard() {
+  const user = useUser()
   const [activeTab, setActiveTab] = useState('dashboard')
-  const [orders, setOrders] = useState<Order[]>([
-    { id: '1', product: 'Cotton T-Shirt', quantity: 2, status: 'Completed', total: 39.98, date: '2023-05-01' },
-    { id: '2', product: 'Denim Jeans', quantity: 1, status: 'In Progress', total: 59.99, date: '2023-05-15' },
-    { id: '3', product: 'Leather Jacket', quantity: 1, status: 'Pending', total: 199.99, date: '2023-05-20' },
-  ])
-  const [user, setUser] = useState<User>({
-    name: 'John Doe',
-    email: 'john.doe@example.com',
-    avatar: '/placeholder.svg?height=32&width=32',
-  })
   const [isDarkMode, setIsDarkMode] = useState(false)
-  const [notifications] = useState([
-    { id: 1, message: 'Your order has been shipped', details: 'Order #1234 - Estimated delivery: 3 days' },
-    { id: 2, message: 'New product available', details: 'Check out our latest collection!' },
-    { id: 3, message: 'Your review has been approved', details: 'Thank you for your feedback!' }
-  ])
-  
+  const [orders, setOrders] = useState<Order[]>([])
+  const [isLoading, setIsLoading] = useState(true)
 
-  const router = useRouter()
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        // Replace this URL with your actual API endpoint
+        const response = await fetch('/api/orders')
+        if (!response.ok) {
+          throw new Error('Failed to fetch orders')
+        }
+        const data = await response.json()
+        setOrders(data)
+      } catch (error) {
+        console.error('Error fetching orders:', error)
+        // Optionally, set an error state here to show an error message to the user
+      } finally {
+        setIsLoading(false)
+      }
+    }
 
-  const handlePlaceOrder = (event: React.FormEvent<HTMLFormElement>) => {
+    fetchOrders()
+  }, [])
+
+
+
+
+
+  const handlePlaceOrder = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     const formData = new FormData(event.currentTarget)
-    const newOrder: Order = {
-      id: (orders.length + 1).toString(),
+
+    const newOrder = {
       product: formData.get('product') as string,
       quantity: Number(formData.get('quantity')),
-      status: 'Pending',
-      total: Math.random() * 100, // This should be calculated based on actual product prices
-      date: new Date().toISOString().split('T')[0],
+      price: Number(formData.get('price')),
+      notes: formData.get('notes') as string,
     }
-    setOrders([...orders, newOrder])
-    setActiveTab('dashboard')
+
+    try {
+      const response = await fetch('/api/orders', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newOrder),
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to create order')
+      }
+
+      const createdOrder = await response.json()
+      setOrders([...orders, createdOrder])
+      setActiveTab('dashboard')
+      // Optionally, show a success message to the user
+    } catch (error) {
+      console.error('Error creating order:', error)
+      // Show an error message to the user
+    }
   }
 
-  const handleUpdateProfile = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-    const formData = new FormData(event.currentTarget)
-    setUser({
-      name: formData.get('name') as string,
-      email: formData.get('email') as string,
-      avatar: user.avatar,
-    })
-  }
 
-  const handleLogout = () => {
-    // In a real application, you would clear the user's session here
-    router.push('/login')
-  }
+
+
 
   const getStatusBadge = (status: Order['status']) => {
     switch (status) {
@@ -98,85 +114,7 @@ export default function UserDashboard() {
     <div className={`min-h-screen flex flex-col ${isDarkMode ? 'dark' : ''}`}>
       <div className="bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 text-gray-900 dark:text-gray-100 flex-grow">
         {/* Header */}
-        <header className="sticky top-0 z-40 bg-white/80 dark:bg-gray-800/80 backdrop-blur-md shadow-md">
-          <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <svg className="h-8 w-8 text-blue-600 dark:text-blue-400" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                <path d="M2 17L12 22L22 17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                <path d="M2 12L12 17L22 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-              <h1 className="text-2xl font-bold text-gray-800 dark:text-white">FiberFlow</h1>
-            </div>
-            <div className="flex items-center space-x-4">
-              <form className="relative hidden md:block">
-                <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                <Input
-                  type="search"
-                  placeholder="Search..."
-                  className="pl-8 pr-4 py-2 w-[200px] lg:w-[300px] rounded-full border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
-                />
-              </form>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon">
-                    <Bell className="h-5 w-5" />
-                    {notifications.length > 0 && (
-                      <span className="absolute top-0 right-0 h-2 w-2 bg-red-500 rounded-full"></span>
-                    )}
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-[300px]">
-                  <DropdownMenuLabel>Notifications</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  {notifications.map(notification => (
-                    <DropdownMenuItem key={notification.id}>
-                      <div className="flex flex-col">
-                        <span className="font-medium">{notification.message}</span>
-                        <span className="text-sm text-gray-500">{notification.details}</span>
-                      </div>
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-                    <Avatar className="h-8 w-8">
-                      <AvatarImage src={user.avatar} alt={user.name} />
-                      <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
-                    </Avatar>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-56" align="end" forceMount>
-                  <DropdownMenuLabel className="font-normal">
-                    <div className="flex flex-col space-y-1">
-                      <p className="text-sm font-medium leading-none">{user.name}</p>
-                      <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
-                    </div>
-                  </DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => setActiveTab('profile')}>
-                    <User className="mr-2 h-4 w-4" />
-                    <span>Profile</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={handleLogout}>
-                    <LogOut className="mr-2 h-4 w-4" />
-                    <span>Log out</span>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-              <div className="flex items-center space-x-2">
-                <Switch
-                  checked={isDarkMode}
-                  onCheckedChange={setIsDarkMode}
-                  className="bg-gray-200 dark:bg-gray-700"
-                />
-                {isDarkMode ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
-              </div>
-            </div>
-          </div>
-        </header>
+        <Header isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />
 
         {/* Main Content */}
         <main className="container mx-auto px-4 py-8 flex-grow">
@@ -194,10 +132,7 @@ export default function UserDashboard() {
                 <CreditCard className="mr-2 h-4 w-4" />
                 New Order
               </TabsTrigger>
-              <TabsTrigger value="profile">
-                <User className="mr-2 h-4 w-4" />
-                Profile
-              </TabsTrigger>
+
               <TabsTrigger value="settings">
                 <Settings className="mr-2 h-4 w-4" />
                 Settings
@@ -208,7 +143,7 @@ export default function UserDashboard() {
             <TabsContent value="dashboard" className="space-y-4">
               <Card>
                 <CardHeader>
-                  <CardTitle>Welcome back, {user.name}!</CardTitle>
+                  <CardTitle>Welcome back, {user.user?.fullName || user.user?.firstName || user.user?.lastName}!</CardTitle>
                   <CardDescription>Here&apos;s a summary of your recent activity</CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -339,6 +274,10 @@ export default function UserDashboard() {
                         <Input type="number" id="quantity" name="quantity" placeholder="Enter quantity" required min="1" />
                       </div>
                       <div className="flex flex-col space-y-1.5">
+                        <Label htmlFor="price">Price</Label>
+                        <Input type="number" id="price" name="price" placeholder="Enter price" required min="1" />
+                      </div>
+                      <div className="flex flex-col space-y-1.5">
                         <Label htmlFor="notes">Additional Notes</Label>
                         <Textarea id="notes" name="notes" placeholder="Enter any additional notes" />
                       </div>
@@ -351,36 +290,6 @@ export default function UserDashboard() {
               </Card>
             </TabsContent>
 
-            {/* Profile */}
-            <TabsContent value="profile">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Profile Management</CardTitle>
-                  <CardDescription>View and update your profile information</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <form onSubmit={handleUpdateProfile}>
-                    <div className="grid w-full items-center gap-4">
-                      <div className="flex flex-col space-y-1.5">
-                        <Label htmlFor="name">Name</Label>
-                        <Input id="name" name="name" placeholder="Enter your name" defaultValue={user.name} required />
-                      </div>
-                      <div className="flex flex-col space-y-1.5">
-                        <Label htmlFor="email">Email</Label>
-                        <Input id="email" name="email" type="email" placeholder="Enter your email" defaultValue={user.email} required />
-                      </div>
-                      <div className="flex flex-col space-y-1.5">
-                        <Label htmlFor="password">New Password</Label>
-                        <Input id="password" name="password" type="password" placeholder="Enter new password" />
-                      </div>
-                    </div>
-                    <CardFooter className="mt-4 p-0">
-                      <Button type="submit">Update Profile</Button>
-                    </CardFooter>
-                  </form>
-                </CardContent>
-              </Card>
-            </TabsContent>
 
             {/* Settings */}
             <TabsContent value="settings">
