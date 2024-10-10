@@ -1,8 +1,7 @@
-// app/page.tsx
-import { redirect } from 'next/navigation';
+import LandingPage from "@/components/LandingPage";
 
 export default function Home() {
-  // Automatically redirect to landing page
-  redirect('/landing-page');
-  return null;
+  return (
+    <LandingPage />
+  )
 }
