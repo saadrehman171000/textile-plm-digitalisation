@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react'
 import Link from 'next/link'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { ArrowRight, CheckCircle, MessageCircle, Users, Zap, Sun, Moon } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -27,9 +27,9 @@ export function LandingPageComponent() {
               <div className="flex items-center">
                 <Link href="/" className="flex-shrink-0 flex items-center">
                   <svg className="h-8 w-8 text-blue-600 dark:text-blue-400" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    <path d="M2 17L12 22L22 17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    <path d="M2 12L12 17L22 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                    <path d="M2 17L12 22L22 17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                    <path d="M2 12L12 17L22 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                   <span className="ml-2 text-2xl font-bold">FiberFlow</span>
                 </Link>
@@ -63,7 +63,7 @@ export function LandingPageComponent() {
         <section className="relative overflow-hidden py-20 sm:py-32">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="lg:grid lg:grid-cols-12 lg:gap-8">
-              <motion.div 
+              <motion.div
                 className="sm:text-center md:max-w-2xl md:mx-auto lg:col-span-6 lg:text-left"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -85,7 +85,7 @@ export function LandingPageComponent() {
                   </Button>
                 </div>
               </motion.div>
-              <motion.div 
+              <motion.div
                 className="mt-12 relative sm:max-w-lg sm:mx-auto lg:mt-0 lg:max-w-none lg:mx-0 lg:col-span-6 lg:flex lg:items-center"
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -172,7 +172,7 @@ export function LandingPageComponent() {
               <h2 className="text-3xl font-extrabold text-center mb-8">
                 Contact Us
               </h2>
-              <motion.form 
+              <motion.form
                 className="space-y-6"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -212,9 +212,9 @@ export function LandingPageComponent() {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
               <div className="col-span-2 md:col-span-1">
                 <svg className="h-8 w-8 text-blue-400" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  <path d="M2 17L12 22L22 17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  <path d="M2 12L12 17L22 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                  <path d="M2 17L12 22L22 17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                  <path d="M2 12L12 17L22 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
                 <p className="mt-4 text-base text-gray-300">
                   Digitalizing the textile industry with innovative PLM solutions.
