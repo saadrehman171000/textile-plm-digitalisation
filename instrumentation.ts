@@ -1,7 +1,6 @@
 
 // Expanding your existing instrumentation.ts to configure and track all necessary 
 // telemetry data. Let’s set up tracing, metrics, error handling, and logging.
-
 import { registerOTel } from '@vercel/otel';
 import { NodeSDK } from '@opentelemetry/sdk-node';
 import { BatchSpanProcessor } from '@opentelemetry/sdk-trace-node';
@@ -11,6 +10,7 @@ import { SemanticResourceAttributes } from '@opentelemetry/semantic-conventions'
 import { ConsoleSpanExporter } from '@opentelemetry/sdk-trace-base';
 import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node';
 import { PeriodicExportingMetricReader } from '@opentelemetry/sdk-metrics';
+import { PinoInstrumentation } from '@opentelemetry/instrumentation-pino';
 
 // Register the OpenTelemetry Vercel integration
 export function register() {
@@ -32,7 +32,10 @@ export function register() {
       [SemanticResourceAttributes.SERVICE_NAME]: 'my-next-app',
     }),
     spanProcessor: new BatchSpanProcessor(traceExporter),
-    instrumentations: [getNodeAutoInstrumentations()],
+    instrumentations: [
+      getNodeAutoInstrumentations(),
+      new PinoInstrumentation(),
+    ],
   });
 
   // Register a metrics reader
@@ -43,10 +46,6 @@ export function register() {
 
   sdk.start();
 }
-
-
-
-
 
 
 
