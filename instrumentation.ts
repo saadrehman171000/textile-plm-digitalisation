@@ -63,6 +63,25 @@ export function register() {
   });
 }
 
+// Custom event tracking in fetchData
+export async function fetchData() {
+  await trace
+    .getTracer('nextjs-server')
+    .startActiveSpan('fetchJsonPlaceholder', async (span) => {
+      try {
+        const res = await fetch("https://jsonplaceholder.typicode.com/posts");
+      } finally {
+        span.addEvent('fetchJsonPlaceholder was called', {
+          provider: 'jsonplaceholder',
+          someKey: 'someValue',
+        });
+        span.end();
+      }
+    });
+}
+
+
+
 
 // -----------------------------------------------------------------------------------------
 
