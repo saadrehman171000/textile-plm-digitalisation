@@ -1,107 +1,82 @@
 // Import necessary modules for OpenTelemetry and Pino logging
-import { registerOTel } from '@vercel/otel'; // Function to register OpenTelemetry settings and configurations
-import { NodeSDK } from '@opentelemetry/sdk-node'; // The core SDK for Node.js, enabling instrumentation and telemetry data collection
-import { BatchSpanProcessor } from '@opentelemetry/sdk-trace-node'; // Processor that batches spans for efficient processing
-import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http'; // Exporter for sending trace data via HTTP to the OpenTelemetry Collector
-import { OTLPTraceExporter as OTLPTraceGRPCExporter } from '@opentelemetry/exporter-trace-otlp-grpc'; // Exporter for sending trace data via gRPC
-import { OTLPMetricExporter } from '@opentelemetry/exporter-metrics-otlp-http'; // Exporter for sending metrics data via HTTP
-import { OTLPMetricExporter as OTLPMetricGRPCExporter } from '@opentelemetry/exporter-metrics-otlp-grpc'; // Exporter for sending metrics data via gRPC
-import { Resource } from '@opentelemetry/resources'; // Module for defining resources associated with telemetry data
-import { SemanticResourceAttributes } from '@opentelemetry/semantic-conventions'; // Predefined attributes to describe resources in telemetry
-import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node'; // Function to automatically instrument Node.js libraries
-import { PeriodicExportingMetricReader } from '@opentelemetry/sdk-metrics'; // Reader for periodically exporting metrics to the configured exporter
-import { trace } from '@opentelemetry/api'; // API for accessing OpenTelemetry tracing functionality
-import { PinoInstrumentation } from '@opentelemetry/instrumentation-pino'; // Instrumentation for Pino, enabling log correlation with tracing
+import { registerOTel } from '@vercel/otel'; 
+import { NodeSDK } from '@opentelemetry/sdk-node'; 
+import { BatchSpanProcessor } from '@opentelemetry/sdk-trace-node'; 
+import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http'; 
+import { OTLPTraceExporter as OTLPTraceGRPCExporter } from '@opentelemetry/exporter-trace-otlp-grpc'; 
+import { OTLPMetricExporter } from '@opentelemetry/exporter-metrics-otlp-http'; 
+import { OTLPMetricExporter as OTLPMetricGRPCExporter } from '@opentelemetry/exporter-metrics-otlp-grpc'; 
+import { Resource } from '@opentelemetry/resources'; 
+import { SemanticResourceAttributes } from '@opentelemetry/semantic-conventions'; 
+import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node'; 
+import { PeriodicExportingMetricReader } from '@opentelemetry/sdk-metrics'; 
+import { trace } from '@opentelemetry/api'; 
+import { PinoInstrumentation } from '@opentelemetry/instrumentation-pino'; 
 
-// Function to register OpenTelemetry configurations and start data collection
 export function register() {
-  // Register the OpenTelemetry service with a specified name to identify it in the telemetry data
-  registerOTel('textile-plm-digitalisation'); // Service name matches the collector config for accurate data processing
+  registerOTel('textile-plm-digitalisation'); 
 
-  // Create an OTLP trace exporter for HTTP, which will send trace data to the specified endpoint
   const traceExporterHTTP = new OTLPTraceExporter({
-    url: 'http://localhost:4318/v1/traces', // Endpoint for the OpenTelemetry Collector to receive trace data over HTTP
+    url: 'http://localhost:4318/v1/traces',
   });
 
-  // Create an OTLP trace exporter for gRPC, enabling sending trace data via the gRPC protocol
   const traceExporterGRPC = new OTLPTraceGRPCExporter({
-    url: 'localhost:4317', // gRPC endpoint for the OpenTelemetry Collector to receive trace data
+    url: 'localhost:4317',
   });
 
-  // Create an OTLP metric exporter for HTTP to send metrics data to the specified endpoint
   const metricExporterHTTP = new OTLPMetricExporter({
-    url: 'http://localhost:4318/v1/metrics', // Endpoint for the OpenTelemetry Collector to receive metrics data over HTTP
+    url: 'http://localhost:4318/v1/metrics',
   });
 
-  // Create an OTLP metric exporter for gRPC, allowing metrics data to be sent via the gRPC protocol
   const metricExporterGRPC = new OTLPMetricGRPCExporter({
-    url: 'localhost:4317', // gRPC endpoint for the OpenTelemetry Collector to receive metrics data
+    url: 'localhost:4317',
   });
 
-  // Set up the OpenTelemetry SDK with resource information, span processor, and metric reader configurations
   const sdk = new NodeSDK({
     resource: new Resource({
-      // Define the resource attributes, specifically the service name, for proper identification in telemetry data
-      [SemanticResourceAttributes.SERVICE_NAME]: 'textile-plm-digitalisation', // Service name matches the collector config
+      [SemanticResourceAttributes.SERVICE_NAME]: 'textile-plm-digitalisation',
     }),
-    // Use a BatchSpanProcessor to efficiently process spans and send them to the trace exporter
-    spanProcessor: new BatchSpanProcessor(traceExporterHTTP), // Using HTTP exporter for sending traces
-    // Define a metric reader that periodically exports metrics to the configured exporter
+    spanProcessor: new BatchSpanProcessor(traceExporterHTTP),
     metricReader: new PeriodicExportingMetricReader({
-      exporter: metricExporterHTTP, // Use HTTP exporter for sending metrics
-      exportIntervalMillis: 60000, // Specify the interval (in milliseconds) for exporting metrics; adjustable based on requirements
+      exporter: metricExporterHTTP,
+      exportIntervalMillis: 60000,
     }),
-    // Specify the list of instrumentations to automatically instrument libraries and integrate them with OpenTelemetry
     instrumentations: [
-      getNodeAutoInstrumentations(), // Automatically instrument supported Node.js libraries for tracing and metrics
-      new PinoInstrumentation(), // Add Pino instrumentation for logging, enabling log correlation with tracing
+      getNodeAutoInstrumentations(),
+      new PinoInstrumentation({
+        disableLogSending: false, // Enable log sending
+      }),
     ],
   });
 
-  // Start the OpenTelemetry SDK, which begins the collection of telemetry data
   sdk.start();
 
-  // Set up error handling for uncaught exceptions in the application
   process.on('uncaughtException', (error) => {
-    // Get the tracer instance for logging unhandled exceptions
     const tracer = trace.getTracer('nextjs-server');
-    // Start a new span to record the unhandled exception
     const span = tracer.startSpan('Unhandled Exception');
-    // Record the exception details within the span
     span.recordException(error);
-    // End the span after recording the exception
     span.end();
   });
 
-  // Set up error handling for unhandled promise rejections in the application
   process.on('unhandledRejection', (reason: unknown) => {
-    // Get the tracer instance for logging unhandled rejections
     const tracer = trace.getTracer('nextjs-server');
-    // Start a new span to record the unhandled rejection
     const span = tracer.startSpan('Unhandled Rejection');
-    // Record the rejection reason within the span
-    span.recordException(reason as any); // Ensure reason is recorded correctly
-    // End the span after recording the rejection
+    span.recordException(reason as any);
     span.end();
   });
 }
 
-// Custom function for tracking events related to data fetching
 export async function fetchData() {
-  // Use the tracer to start an active span for fetching data from an external source
   await trace
-    .getTracer('nextjs-server') // Get the tracer instance for the 'nextjs-server' service
+    .getTracer('nextjs-server')
     .startActiveSpan('fetchJsonPlaceholder', async (span) => {
       try {
-        // Attempt to fetch data from a sample JSON placeholder API
         const res = await fetch("https://jsonplaceholder.typicode.com/posts");
       } finally {
-        // Add an event to the span after the fetch attempt, providing additional metadata
         span.addEvent('fetchJsonPlaceholder was called', {
-          provider: 'jsonplaceholder', // Metadata indicating the source of the fetch call
-          someKey: 'someValue', // Placeholder key-value pair for additional information
+          provider: 'jsonplaceholder',
+          someKey: 'someValue',
         });
-        // End the span after recording the event
         span.end();
       }
     });
