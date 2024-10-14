@@ -10,6 +10,8 @@ import { SemanticResourceAttributes } from '@opentelemetry/semantic-conventions'
 import { ConsoleSpanExporter } from '@opentelemetry/sdk-trace-base';
 import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node';
 import { PeriodicExportingMetricReader } from '@opentelemetry/sdk-metrics';
+
+// Used Pino for logging
 import { PinoInstrumentation } from '@opentelemetry/instrumentation-pino';
 
 // Register the OpenTelemetry Vercel integration
