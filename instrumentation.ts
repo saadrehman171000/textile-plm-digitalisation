@@ -1,18 +1,16 @@
-
 // Expanding your existing instrumentation.ts to configure and track all necessary 
 // telemetry data. Let’s set up tracing, metrics, error handling, and logging.
 import { registerOTel } from '@vercel/otel';
 import { NodeSDK } from '@opentelemetry/sdk-node';
 import { BatchSpanProcessor } from '@opentelemetry/sdk-trace-node';
-import { OTLPTraceExporter, OTLPMetricExporter } from '@opentelemetry/exporter-trace-otlp-http';
+import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
+import { OTLPMetricExporter } from '@opentelemetry/exporter-metrics-otlp-http'; // Correct import for metrics
 import { Resource } from '@opentelemetry/resources';
 import { SemanticResourceAttributes } from '@opentelemetry/semantic-conventions';
-import { ConsoleSpanExporter } from '@opentelemetry/sdk-trace-base';
 import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node';
 import { PeriodicExportingMetricReader } from '@opentelemetry/sdk-metrics';
-
-// Used Pino for logging
-import { PinoInstrumentation } from '@opentelemetry/instrumentation-pino';
+import { trace } from '@opentelemetry/api'; // Importing trace API for error handling
+import { PinoInstrumentation } from '@opentelemetry/instrumentation-pino'; // Used Pino for logging
 
 // Register the OpenTelemetry Vercel integration
 export function register() {
@@ -34,24 +32,36 @@ export function register() {
       [SemanticResourceAttributes.SERVICE_NAME]: 'my-next-app',
     }),
     spanProcessor: new BatchSpanProcessor(traceExporter),
+    metricReader: new PeriodicExportingMetricReader({
+      exporter: metricExporter,
+      exportIntervalMillis: 60000, // Adjust the interval as needed
+    }),
     instrumentations: [
       getNodeAutoInstrumentations(),
       new PinoInstrumentation(),
     ],
   });
 
-  // Register a metrics reader
-  sdk.addMetricReader(new PeriodicExportingMetricReader({
-    exporter: metricExporter,
-    exportIntervalMillis: 60000, // Adjust the interval as needed
-  }));
-
+  // Start the SDK
   sdk.start();
+
+  // Handle uncaught exceptions and unhandled rejections
+  process.on('uncaughtException', (error) => {
+    const tracer = trace.getTracer('nextjs-server');
+    const span = tracer.startSpan('Unhandled Exception');
+    span.recordException(error);
+    span.end();
+  });
+
+  process.on('unhandledRejection', (reason: unknown) => {
+    const tracer = trace.getTracer('nextjs-server');
+    const span = tracer.startSpan('Unhandled Rejection');
+    
+    // Cast reason to 'any' type for recordException
+    span.recordException(reason as any);
+    span.end();
+  });
 }
-
-
-
-
 
 
 // -----------------------------------------------------------------------------------------
