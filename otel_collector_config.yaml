@@ -1,0 +1,24 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+      http:
+
+processors:
+  batch:
+
+exporters:
+  new_relic:
+    api_key: "<YOUR_NEW_RELIC_API_KEY>"
+    region: "US"  # Use "EU" if your account is in Europe
+    service: "textile-plm-digitalisation"  # Your service name
+
+  zipkin:
+    endpoint: "http://zipkin:9411/api/v2/spans"  # Zipkin exporter
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [new_relic, zipkin]  # Send traces to both New Relic and Zipkin

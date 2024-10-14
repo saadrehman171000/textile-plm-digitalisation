@@ -1,9 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    images: {
+  images: {
       domains: ['i.imgur.com', 'images.unsplash.com'], // Add necessary domains here
-    },
-  };
-  
-  export default nextConfig;
-  
+  },
+  experimental: {
+      instrumentationHook: true,  // Opt-in to the experimental instrumentation hook
+  },
+};
+
+export default nextConfig;
