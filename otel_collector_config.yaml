@@ -9,9 +9,9 @@ processors:
 
 exporters:
   new_relic:
-    api_key: "<YOUR_NEW_RELIC_API_KEY>"
-    region: "US"  # Use "EU" if your account is in Europe
-    service: "textile-plm-digitalisation"  # Your service name
+    api_key: "eu01xx420746d2c419da3f475ddb0c5cFFFFNRAL"  # Use your New Relic API key
+    region: "EU"  # Use "EU" for your New Relic account region
+    service: "textile-plm-digitalisation"  # Change this to match the service name in your instrumentation.ts
 
   zipkin:
     endpoint: "http://zipkin:9411/api/v2/spans"  # Zipkin exporter
@@ -22,3 +22,23 @@ service:
       receivers: [otlp]
       processors: [batch]
       exporters: [new_relic, zipkin]  # Send traces to both New Relic and Zipkin
+
+    metrics:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [new_relic]  # Send metrics only to New Relic
+
+    logs:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [new_relic]  # Send logs only to New Relic
+
+    errors:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [new_relic]  # Send errors only to New Relic
+
+    custom_events:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [new_relic]  # Send custom events only to New Relic

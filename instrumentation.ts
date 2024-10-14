@@ -1,5 +1,4 @@
-// Expanding your existing instrumentation.ts to configure and track all necessary 
-// telemetry data. Let’s set up tracing, metrics, error handling, and logging.
+// Import necessary modules
 import { registerOTel } from '@vercel/otel';
 import { NodeSDK } from '@opentelemetry/sdk-node';
 import { BatchSpanProcessor } from '@opentelemetry/sdk-trace-node';
@@ -12,24 +11,23 @@ import { PeriodicExportingMetricReader } from '@opentelemetry/sdk-metrics';
 import { trace } from '@opentelemetry/api'; // Importing trace API for error handling
 import { PinoInstrumentation } from '@opentelemetry/instrumentation-pino'; // Used Pino for logging
 
-// Register the OpenTelemetry Vercel integration
 export function register() {
-  registerOTel('my-next-app');
+  registerOTel('textile-plm-digitalisation'); // Service name matches the collector config
 
   // Create an OTLP trace exporter
   const traceExporter = new OTLPTraceExporter({
-    url: 'http://localhost:4318/v1/traces', // Replace with your OTLP endpoint
+    url: 'http://localhost:4318/v1/traces', // Ensure this points to your collector's traces endpoint
   });
 
   // Create an OTLP metrics exporter
   const metricExporter = new OTLPMetricExporter({
-    url: 'http://localhost:4318/v1/metrics', // Replace with your OTLP endpoint
+    url: 'http://localhost:4318/v1/metrics', // Ensure this points to your collector's metrics endpoint
   });
 
   // Set up the OpenTelemetry SDK
   const sdk = new NodeSDK({
     resource: new Resource({
-      [SemanticResourceAttributes.SERVICE_NAME]: 'my-next-app',
+      [SemanticResourceAttributes.SERVICE_NAME]: 'textile-plm-digitalisation', // Service name matches the collector config
     }),
     spanProcessor: new BatchSpanProcessor(traceExporter),
     metricReader: new PeriodicExportingMetricReader({
@@ -56,9 +54,7 @@ export function register() {
   process.on('unhandledRejection', (reason: unknown) => {
     const tracer = trace.getTracer('nextjs-server');
     const span = tracer.startSpan('Unhandled Rejection');
-    
-    // Cast reason to 'any' type for recordException
-    span.recordException(reason as any);
+    span.recordException(reason as any); // Ensure reason is recorded correctly
     span.end();
   });
 }

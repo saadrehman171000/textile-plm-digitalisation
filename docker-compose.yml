@@ -6,7 +6,7 @@ services:
       - ./otel_collector_config.yaml:/otel_collector_config.yaml
     ports:
       - "4317:4317"  # OTLP gRPC port
-      - "55681:55681"  # OTLP HTTP port
+      - "4318:4318"  # OTLP HTTP port (make sure to add this for metrics and traces)
     command: ["--config=/otel_collector_config.yaml"]
 
   zipkin:
