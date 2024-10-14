@@ -1,9 +1,10 @@
-// Import necessary modules
 import { registerOTel } from '@vercel/otel';
 import { NodeSDK } from '@opentelemetry/sdk-node';
 import { BatchSpanProcessor } from '@opentelemetry/sdk-trace-node';
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
+import { OTLPTraceExporter as OTLPTraceGRPCExporter } from '@opentelemetry/exporter-trace-otlp-grpc'; // Import gRPC exporter
 import { OTLPMetricExporter } from '@opentelemetry/exporter-metrics-otlp-http'; // Correct import for metrics
+import { OTLPMetricExporter as OTLPMetricGRPCExporter } from '@opentelemetry/exporter-metrics-otlp-grpc'; // Import gRPC exporter
 import { Resource } from '@opentelemetry/resources';
 import { SemanticResourceAttributes } from '@opentelemetry/semantic-conventions';
 import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node';
@@ -14,14 +15,22 @@ import { PinoInstrumentation } from '@opentelemetry/instrumentation-pino'; // Us
 export function register() {
   registerOTel('textile-plm-digitalisation'); // Service name matches the collector config
 
-  // Create an OTLP trace exporter
-  const traceExporter = new OTLPTraceExporter({
-    url: 'http://localhost:4318/v1/traces', // Ensure this points to your collector's traces endpoint
+  // Create OTLP trace exporters for both HTTP and gRPC
+  const traceExporterHTTP = new OTLPTraceExporter({
+    url: 'http://localhost:4318/v1/traces',
   });
 
-  // Create an OTLP metrics exporter
-  const metricExporter = new OTLPMetricExporter({
-    url: 'http://localhost:4318/v1/metrics', // Ensure this points to your collector's metrics endpoint
+  const traceExporterGRPC = new OTLPTraceGRPCExporter({
+    url: 'localhost:4317', // gRPC endpoint
+  });
+
+  // Create OTLP metrics exporters for both HTTP and gRPC
+  const metricExporterHTTP = new OTLPMetricExporter({
+    url: 'http://localhost:4318/v1/metrics',
+  });
+
+  const metricExporterGRPC = new OTLPMetricGRPCExporter({
+    url: 'localhost:4317', // gRPC endpoint
   });
 
   // Set up the OpenTelemetry SDK
@@ -29,9 +38,9 @@ export function register() {
     resource: new Resource({
       [SemanticResourceAttributes.SERVICE_NAME]: 'textile-plm-digitalisation', // Service name matches the collector config
     }),
-    spanProcessor: new BatchSpanProcessor(traceExporter),
+    spanProcessor: new BatchSpanProcessor(traceExporterHTTP), // Use HTTP exporter
     metricReader: new PeriodicExportingMetricReader({
-      exporter: metricExporter,
+      exporter: metricExporterHTTP,
       exportIntervalMillis: 60000, // Adjust the interval as needed
     }),
     instrumentations: [
