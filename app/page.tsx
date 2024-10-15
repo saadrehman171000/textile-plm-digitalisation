@@ -1,10 +1,10 @@
 // app/page.tsx
 import { redirect } from 'next/navigation';
-import { initializeTelemetry } from '../telemetry'; // Adjust the path based on your project structure
+import { register as initializeTelemetry } from '../instrumentation'; // Adjust based on your actual structure
 
 export default function Home() {
   // Initialize telemetry
-  initializeTelemetry('textile-plm-digitalisation'); // Replace with your service name
+  initializeTelemetry(); // Replace with your service name
 
   // Automatically redirect to landing page
   redirect('/landing-page');
