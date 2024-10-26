@@ -76,5 +76,5 @@ const Header = ({ isDarkMode, setIsDarkMode }: Props) => {
     </header>
   )
 }
-
 export default Header;
+
